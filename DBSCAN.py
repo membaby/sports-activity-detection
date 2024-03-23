@@ -46,6 +46,18 @@ def DBSCAN(adj_mat, eps, min_pts):
         #Add density connected points to cluster
         density_connected(x_idx, k, neighborhoods, clustering, core)
     
+    #Clustering outliers
+    outlier_count = 0
+    for i in range(n):
+        if clustering[i] == -1:
+            outlier_count += 1
+            nearest = 0
+            for j in range(1, n):
+                if clustering[j] != -1 and adj_mat[i, j] < adj_mat[i, nearest]:
+                    nearest = j
+            clustering[i] = clustering[nearest]
+    print(f"DBSCAN: {outlier_count} outliers were clustered with 1NN.")
+    
     return clustering            
 
 
