@@ -24,7 +24,16 @@ def rbf_matrix(data, gamma):
     return np.exp(-gamma * euclid_distance_matrix(data)**2)
 
 
-def DBSCAN(adj_mat, eps, min_pts):
+def DBSCAN(data, eps, min_pts, distance_metric='euclidean', gamma=1.0):
+    using_rbf = False
+    if (distance_metric == 'euclidean'):
+        adj_mat = euclid_distance_matrix(adj_mat)
+    else:
+        adj_mat = rbf_matrix(data, gamma)
+        using_rbf = True
+        #eps is the euclidean threshold for density connected points. Must be converted to RBF distance
+        eps = np.exp(-gamma * eps**2)
+    
     n = adj_mat.shape[0]
     clustering = np.zeros(n)
     core = set()
@@ -32,7 +41,9 @@ def DBSCAN(adj_mat, eps, min_pts):
     #Find core points
     for i in range(n):
         clustering[i] = -1
-        neighborhoods.append(np.where(adj_mat[i] <= eps)[0])
+        if not using_rbf:
+            neighborhoods.append(np.where(adj_mat[i] <= eps)[0])
+        else: neighborhoods.append(np.where(adj_mat[i] >= eps)[0])
         if len(neighborhoods[i]) >= min_pts:
             core.add(i)
             
@@ -53,8 +64,9 @@ def DBSCAN(adj_mat, eps, min_pts):
             outlier_count += 1
             nearest = 0
             for j in range(1, n):
-                if clustering[j] != -1 and adj_mat[i, j] < adj_mat[i, nearest]:
-                    nearest = j
+                if clustering[j] != -1:
+                    if not using_rbf and adj_mat[i, j] < adj_mat[i, nearest]: nearest = j
+                    elif using_rbf and adj_mat[i, j] > adj_mat[i, nearest]: nearest = j
             clustering[i] = clustering[nearest]
     print(f"DBSCAN: {outlier_count} outliers were clustered with 1NN.")
     
