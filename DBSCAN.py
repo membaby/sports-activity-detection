@@ -12,7 +12,7 @@ def euclid_distance_matrix(data):
 
 
 def DBSCAN(data, eps, min_pts):
-    adj_mat = euclid_distance_matrix(adj_mat)
+    adj_mat = euclid_distance_matrix(data)
     n = adj_mat.shape[0]
     clustering = np.zeros(n)
     core = set()
