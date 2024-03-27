@@ -10,7 +10,6 @@ def get_contingency_matrix(clustering, truth, n_classes, n_clusters):
     return cont_mat
 
 def conditional_entropy(clustering, truth, n_classes, n_clusters):
-    print("Runnign conditional entropy")
     cont_mat = get_contingency_matrix(clustering, truth, n_classes, n_clusters)
     entropy =  0
     for j in range(n_classes):
@@ -23,7 +22,6 @@ def conditional_entropy(clustering, truth, n_classes, n_clusters):
     return entropy
 
 def f_measure(clustering, truth, n_classes, n_clusters):
-    print("Running fmeasure")
     cont_mat = get_contingency_matrix(clustering, truth, n_classes, n_clusters)
     fs = np.empty(n_clusters)
     for i in range(n_clusters):
